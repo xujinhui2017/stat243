@@ -1,0 +1,102 @@
+\documentclass{article}
+\usepackage{natbib}
+\usepackage[unicode=true]{hyperref}
+\usepackage{geometry}
+\geometry{tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+
+%% for inline R code: if the inline code is not correctly parsed, you will see a message
+\newcommand{\rinline}[1]{SOMETHING WRONG WITH knitr}
+%% begin.rcode setup, include=FALSE
+% # include any code here you don't want to show up in the document,
+% # e.g., package and dataset loading
+%
+% require(ggplot2)
+% set.seed(0)
+%
+% # also a good place to set global chunk options
+%
+% library(knitr) # need this for opts_chunk command
+% opts_chunk$set(fig.width = 5, fig.height = 5)
+% # if we wanted chunks by default not to be evaluated
+% # opts_chunk$set(eval = FALSE)  
+% 
+%% end.rcode
+
+
+\begin{document} 
+\title{STAT243-PS1}
+\author{Jinhui Xu}
+\date{September 2017}
+
+\maketitle
+
+
+\section{Question 2}
+ 
+
+a)\\
+download the data from the given url and unzip it.I find that regions of world have "+" in their names.According to this features I can grep and divide data into two parts.
+%% begin.rcode bash-chunk1, engine='bash',eval=FALSE
+% wget -O data.zip "http://data.un.org/Handlers/DownloadHandler.ashx?DataFilter=itemCode:
+% 526&DataMartId=FAO&Format=csv&c=2,3,4,5,6,7&s=countryName:asc,elementCode:asc,year:desc"
+% unzip data.zip  
+% grep "+" data0.csv >regiondata.csv
+% grep -v "+" data0.csv >countrydata.csv
+%% end.rcode
+
+then I deal with country.csv as required.As some countries'name contain "," ,I replace it with blank.In this way,it is convenient to cut it and thus get what I want.Finally use loop to analyse several years. 
+
+
+%%begin.rcode bash-chunk2, engine='bash',eval=FALSE
+%grep "2005" countrydata.csv | grep "Area Harvested" |sed -e 's/, / /g' |sed 's/"//g'| 
+%sort -r -n -t"," -k6 |head -5|cut -d',' -f1             
+%for c in {1965,1975,1985,1995,2005}; do grep "${c}" countrydata.csv | grep "Area Harvested" |
+%sed -e 's/, / /g' |sed 's/"//g'| sort -r -n -t"," -k6 |head -5|cut -d',' -f1 ;done    
+%% end.rcode
+
+b)\\
+In myfun(),I first judge whether the numebr of arguments equals to 1 and the judge if the argument is "-h" and else I download the data according to given data codes.As the filename is unknown,I unzip .zip to a new file and rename it and then less it.
+
+%% begin.rcode bash-chunk3, engine='bash',eval=FALSE
+%function myfun(){
+%  if [ $# -ne "1" ]; then 
+%     echo 'the number of arguments is wrong!'
+%  elif [ $1 == "-h" ]; then 
+%     echo "download data from http://data.un.org. input product number and get data "
+%  else 
+%     wget -O data$1.zip "http://data.un.org/Handlers/DownloadHandler.ashx?DataFilter=itemCode:
+% $1&DataMartId=FAO&Format=csv&c=2,3,4,5,6,7&s=countryName:asc,elementCode:asc,year:desc"
+%     unzip -u data$1.zip -d data$1
+%     mv data$1/* data$1.csv
+%     rmdir data$1
+%     rm data$1.zip
+%    less data$1.csv
+%  fi
+%  }
+%% end.rcode
+\section{Question 3}
+First,I download a .html and get content contains txt via grep; then find location of filename and get it via cut.finally download all txt via loop.
+%% begin.rcode bash-chunk4, engine='bash',eval=FALSE
+%wget -O index.html "http://www1.ncdc.noaa.gov/pub/data/ghcn/daily/"
+%less index.html | grep ".txt" | cut -d "\"" -f8>filename.txt
+%for file in $(less filename.txt)
+%do 
+%wget "http://www1.ncdc.noaa.gov/pub/data/ghcn/daily/$file"
+%echo "successfully download $file"
+%done
+%% end.rcode
+
+\newpage
+\section{Question 4}
+
+The height of the water level in Lake Huron fluctuates over time. Here I ’analyze’ the variation using R. I show a histogram of the lake levels for the period \rinline{time(LakeHuron)[1]} to \rinline{time(LakeHuron)[98]}
+
+%%begin.rcode r-plot, fig.height = 3
+%hist(LakeHuron)
+%lowHi <- c(which.min(LakeHuron), which.max(LakeHuron)) 
+%yearExtrema <- attributes(LakeHuron)
+%%end.rcode
+
+
+
+\end{document}
