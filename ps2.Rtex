@@ -1,0 +1,193 @@
+\documentclass{article}
+\usepackage{natbib}
+\usepackage[unicode=true]{hyperref}
+\usepackage{geometry}
+\geometry{tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+
+
+
+\begin{document} 
+\title{STAT243-PS2}
+\author{Jinhui Xu}
+\date{September 2017}
+
+\maketitle
+
+\section{other students}
+I discuss some problems with Xin Shi.  
+\section{Question 1}
+ 
+\subsection{(a)}
+When save letters in text format, every letter is stored as one byte.In the first r-chunk,1000000 letters and about 1000000 separators are stored while the second r-chunk only store 1000000 letters.So tmp1.csv is smaller.
+%% begin.rcode r-chunk1,
+% ## save letters in text format
+%chars <- sample(letters, 1e6, replace = TRUE)
+%write.table(chars, file = 'tmp1.csv', row.names = FALSE, quote = FALSE,
+%col.names = FALSE)
+%system('ls -l tmp1.csv', intern = TRUE)
+%% end.rcode
+
+%%begin.rcode r-chunk2
+% ## save letters in text format
+%chars <- paste(chars, collapse = '')
+%write.table(chars, file = 'tmp2.csv', row.names = FALSE, quote = FALSE,
+%col.names = FALSE)
+%system('ls -l tmp2.csv', intern = TRUE)
+%%end.rcode
+
+As numbers are stored as 8 bytes in binary format,so 1000000 numbers takes about 8MB.
+%%begin.rcode r-chunk3
+%nums <- rnorm(1e6)
+%save(nums, file = 'tmp3.Rda') 
+%system('ls -l tmp3.Rda', intern = TRUE)
+%%end.rcode
+
+For example,123.232123 would take 10 bytes in ASCII.So a .csv is generally larger than .Rda(binary)
+%%begin.rcode r-chunk4
+%write.table(nums, file = 'tmp4.csv', row.names = FALSE, quote = FALSE,
+%col.names = FALSE, sep = ',')
+%system('ls -l tmp4.csv', intern = TRUE)
+%%end.rcode
+
+round(nums,2) makes every number shorter,so it saves many bytes in ASCII.
+%%begin.rcode r-chunk5
+%write.table(round(nums, 2), file = 'tmp5.csv', row.names = FALSE, 
+%quote = FALSE, col.names = FALSE, sep = ',')
+%system('ls -l tmp5.csv', intern = TRUE)
+%%end.rcode
+
+\subsection{(b)}
+
+According to r-chunk6 and r-chunk7, I find Rda is actually a compressed file. The option of save() shows that it can use gzip. bzip2 or xz to compress files. 
+%%begin.rcode r-chunk6
+%chars <- sample(letters, 1e6, replace = TRUE) 
+%chars <- paste(chars, collapse = '')
+%save(chars, file = 'tmp6.Rda')
+%system('ls -l tmp6.Rda', intern = TRUE)
+%%end.rcode
+
+%%begin.rcode r-chunk7
+%chars <- rep('a', 1e6)
+%chars <- paste(chars, collapse = '') 
+%save(chars, file = 'tmp7.Rda') 
+%system('ls -l tmp7.Rda', intern = TRUE)
+%%end.rcode
+
+\section{Qustion 2}
+\subsection{(a)}
+  The first part of url is always https://scholar.google.com/, so I need to get the rest part of url. \\
+  \\
+  First,I view the html element via chrome,and understand the structure of html.Then find the class corresponding to the researchers's citation page.It is in ``h4 class''. Finally just find url I need and paste two url.\\
+  \\
+  The second part of url contains ID,so locate the ID and substr the url.
+%% begin.rcode r-chunk8
+%library(XML)
+%library(curl)
+%library(stringr)
+%% end.rcode
+  
+%%begin.rcode r-chunk9
+%get_html=function(name){
+%  url=gsub(" ","",paste("https://scholar.google.com/scholar?hl=en&q=",name))
+%  html=htmlParse(readLines(url))                           
+%  content=getNodeSet(html,'//h4[@class="gs_rt2"]')                    #get the class we need
+%if(content[1]=="NULL") {                                              #check whether the name exists
+%    result="Sorry,can not find scholar name"
+%    return(result)
+%  }
+%  else
+%  url_1=as.character(xmlAttrs(content[[1]][[1]]))                     #get the useful part of content
+%  urlfinal=gsub(" ","",paste("https://scholar.google.com/",url_1))
+%  userid=substr(url_1,str_locate(url_1,"user")[1,2]+2,str_locate(url_1,"&")[1,1]-1)  #locate the ID 
+%  result=list(html=htmlParse(readLines(urlfinal)),userID=userid)
+%return(result)
+%}
+%name="Albert Einstein"
+%get_html(name)$userID
+%%end.rcode
+
+\subsection{(b)}
+View the element of html and find exactly what we need.\\
+\\ The information about articles is contained in ``tr class''. Therefore extract that part and store them in vector.\\
+\\ In final transfer five vectors into a dataframe.
+\\
+%%begin.rcode r-chunk10
+%get_article_inf=function(html){
+%  content=getNodeSet(html,'//tr[@class]')        #get the part we need
+%  article_title=c()
+%  authors=c()
+%  journal_information=c()
+%  citations_number=c()
+%  year_publication=c()
+%  for(i in 1:20){                               #store data in vectors
+%    article_title[i]=xmlValue(content[[i]][[1]][[1]])                         #titles
+%    authors[i]=xmlValue(content[[i]][[1]][[2]])                               #authors
+%    journal_information[i]=xmlValue(content[[i]][[1]][[3]][[1]])              #journal
+%    year_publication[i]=gsub(",","",xmlValue(content[[i]][[1]][[3]][[2]]))    #year of publication
+%    citations_number[i]=xmlValue(content[[i]][[2]][[1]])                      #number of citations
+%    data=cbind(article_title,authors,journal_information,year_publication,citations_number)
+%    data=as.data.frame(data)                    #transfer into dataframe
+%  }
+%return(data)
+%}
+%%end.rcode
+
+%%begin.rcode r-chunk11,eval=FALSE         
+%name="Albert Einstein"              #try the function.but the dataframe is large, so do not show result.
+%get_article_inf(get_html(name)$html)
+%%end.rcode
+
+\subsection{(c)}
+
+I test whether the id I get from the first function is right and whether the function can give a graceful recommend when the input is invalid.
+
+%%begin.rcode r-chunk12,eval=FALSE   
+%library(testthat)
+%test_that("wrong input",{                                          
+%expect_equal(get_html('abc'),"Sorry,can not find this name in Google Scholar")
+%expect_equal(get_html('Albert Einstein'),"qc6CJjYAAAAJ")
+%}
+%)
+%%end.rcode
+
+\subsection{(d)}
+Through the network option of the html source, I find that the request of Show more just add ``\verb'&'cstart=20\verb'&'pagesize=80'' to url.Therefore, loop is able to help me get all information of articles. Let pagesize=20.
+%%begin.rcode r-chunk13,eval=FALSE
+%get_all_article=function(name){
+%  article_title=c()                         #     set five vectors to store data
+%  authors=c()
+%  journal_information=c()
+%  citations_number=c()
+%  year_publication=c()
+%  url0=gsub(" ","",paste("https://scholar.google.com/scholar?hl=en&q=",name))   #get initial url
+%  html0=htmlParse(readLines(url0))
+%  content0=getNodeSet(html0,'//h4[@class="gs_rt2"]')
+%    if(content0[1]=="NULL") {                                           #check whether the name exists
+%      result="Sorry,can not find scholar name"
+%      return(result)
+%    }
+%  url_1=as.character(xmlAttrs(content0[[1]][[1]]))   
+%  urlfinal=gsub(" ","",paste("https://scholar.google.com/",url_1))   #get url that can get 20 articles
+%  length=20;j=0;
+%  #set length=length(content),when it is smaller than 20,show that we have get all data
+%  while(length==20){  
+%  #every time we get 20 new articles data
+%    url=gsub(" ","",paste(urlfinal,"&cstart=",20*j,"&pagesize=20"))  
+%    html=htmlParse(readLines(url))
+%    content=getNodeSet(html,'//tr[@class]')
+%   length=length(content)
+%    for(i in 1:length){                                           #store the data
+%      article_title[i+20*j]=xmlValue(content[[i]][[1]][[1]])
+%      authors[i+20*j]=xmlValue(content[[i]][[1]][[2]])
+%      journal_information[i+20*j]=xmlValue(content[[i]][[1]][[3]][[1]])
+%      year_publication[i+20*j]=gsub(",","",xmlValue(content[[i]][[1]][[3]][[2]]))
+%      citations_number[i+20*j]=xmlValue(content[[i]][[2]][[1]])
+%      }
+%  j=j+1
+%  }
+%data=cbind(article_title,authors,journal_information,year_publication,citations_number)
+%data=as.data.frame(data)
+%return(data)
+%}
+%%end.rcode
+\end{document}
