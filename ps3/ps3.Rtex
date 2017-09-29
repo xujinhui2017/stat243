@@ -1,0 +1,303 @@
+\documentclass{article}
+\usepackage{natbib}
+\usepackage[unicode=true]{hyperref}
+\usepackage{geometry}
+\geometry{tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+%% begin.rcode setup, include=FALSE
+
+% require(ggplot2)
+% library(knitr) 
+% opts_chunk$set(fig.width = 5, fig.height = 5)
+%% end.rcode
+
+
+\begin{document} 
+\title{STAT243-PS3}
+\author{Jinhui Xu}
+\date{September 2017}
+
+\maketitle
+
+\section{Other students}
+I discuss some problems with Xin Shi.  
+
+\section{Question 1}
+Material four : Millman and Perez\\
+
+The article emphasizes the importance of good practice of computational work. It first introduces its vision for scientific software development in everyday research. Then gives specific recommendations for computational work.\\
+
+I think the article is meaningful. As when I was confused about my project thesis, I would search solutions on the internet. However, the code I found usually did not work because I did not know how to use the data and which tools should I use. Therefore I think that good practice of computational work is necessary.\\
+
+The article gives recommendations on each step of research work from initial exploration of ideas and data to final results,including Individual exploration,  Collaboration, Production-scale execution, Publication and Education.\\
+
+
+But I am not familiar with some tools and process the article mentions, so I have two questions:\\
+
+Q1: the article says that the Python language has a simple, expressive, and accessible syntax that emphasizes code readability. I don’t know what code readability means? Whether R or other languages do well in code readability?\\
+
+Q2: In the section of collaboration, the article mentions the concept of distributed version control systems. Are Mercurial or other DVCS similar with git? Whether git is enough for us?
+
+\section{Question 2}
+ 
+\subsection{(a)}
+
+In this section, I add each play into a list which call playlist. As at the begin of each play, there is year of play, so I grep the str start with four digits and get 38 years. Delete the first one and the last one, I can obtain plays by reading the content between two years.
+%%begin.rcode r-chunk1,eval=FALSE
+%#read the original txt and store it in text
+%text=readLines("http://www.gutenberg.org/cache/epub/100/pg100.txt")
+%#get rownumber of year in text and store 36 years in vector year_play,it is for question (b)
+%year_rownumber=grep('^[[:digit:]]{4}',text)
+%year_play=text[year_rownumber[2:(length(year_rownumber)-1)]]
+%#store each play in playlist,I believe that the content between year of play_i 
+%#and year of play_i+1 is exactly the content of play_i
+%playlist=list()
+%for(i in 1:36) playlist[[i]]=text[(year_rownumber[i+1]):(year_rownumber[i+2]-1)]
+%%end.rcode
+
+\subsection{(b)}
+
+I have get year\_play in Q(a), and get the title of play by obtaining content in the second row (not NULL) of a play.
+The way to get the number of acts and the number of scenes is similar so I write a function named count\_number(str\_target,searchlist).str\_target is a regex to be matched in searchlist. And the output is a list contain content\_list and count\_number.
+%%begin.rcode r-chunk2,eval=FALSE
+%#the second row is exactly the title of play.
+%title=c();
+%for(i in 1:36) title[i]=playlist[[i]][which(playlist[[i]]!="")[2]]
+%#get the number of scenes by locate the str , and the number of acts equels to the number of unique name of act ,
+%#the function to get the number of acts and scenes
+%library(stringr)
+%count_number=function(str_target,searchlist){
+%  content_list=list()
+%  content_number=c()
+%  for(i in 1:length(searchlist)){
+%    str_locate=c()
+%    str_locate=grep(str_target,searchlist[[i]])
+%    content_list[[i]]=searchlist[[i]][str_locate]
+%    content_number[i]=length(str_locate)
+%  }
+%  list=list(content_list,content_number)
+%  return(list)
+%}
+%%end.rcode
+Run the function to get  act\_number and scene\_number
+%%begin.rcode r-chunk3,eval=FALSE
+%scene_list=list();act_list=list();scene_number=c();act_number=c()
+%scene_str="[S][Cc][Ee][Nn][Ee][[:blank:]]"
+%act_str="A[Cc][Tt] " 
+%scene_list=count_number(scene_str,playlist)[[1]]
+%scene_number=count_number(scene_str,playlist)[[2]]
+%act_list=count_number(act_str,playlist)[[1]]
+%act_number=c();for(i in 1: 36) act_number[i]=length(unique(str_extract_all(act_list[[i]],
+%'A[Cc][Tt][[:blank:]]?[[:alpha:]]*')))
+%%end.rcode
+
+Then extract the body and store five factors in a list. the information of play\_i is stored in result{[[i]]}
+%%begin.rcode r-chunk4
+%body_list=list();
+%for(i in 1:36) body_list[[i]]=playlist[[i]][grep("^[[:blank:]]*[Ss][Cc][Ee][Nn][Ee][[:punct:]]"
+%,playlist[[i]]):length(playlist[[i]])]
+%result=list()
+%for(i in 1:36) {
+%  play_result=list()
+%  play_result[[1]]=year_play[i]
+%  play_result[[2]]=title[i]
+%  play_result[[3]]=act_number[i]
+%  play_result[[4]]=scene_number[i]
+%  play_result[[5]]=body_list[[i]]
+%  names(play_result)=c('year','title','number of acts','number of scenes','body')
+%  result[[i]]=play_result
+%}
+%%end.rcode
+
+view the result of play\_1 except the body of play (too large)
+%%begin.rcode r-chunk5
+%result[[1]]$year
+%result[[1]]$title
+%result[[1]]$'number of acts'
+%result[[1]]$'number of scenes'
+%%end.rcode
+
+\subsection{(c)}
+
+First,update the body\_list,delete the first 5 rows of body. I suppose that part of information are confused.
+%%begin.rcode r-chunk6
+%body_update=body_list
+%library(stringr)
+%for(i in 1:36){
+%  n=grep("[S][Cc][Ee][Nn][Ee][[:blank:]]",body_list[[i]])
+%  for(j in 1:length(n))
+%  body_update[[i]][n[j]:(n[j]+4)]='null'
+%}
+%%end.rcode
+
+get the unique speaker name.I suppose that every speaker's name begins with a upper,every chunk must have at least one lower.
+%%begin.rcode r-chunk7,eval=FALSE
+%speaker_first_content=list()
+%name=list()
+%speaker_locate=list()
+%speaker_number=c()
+%for(i in 1:36){
+
+%#delete several specific stage direction like Exit,Enter...
+%  body_update[[i]]=str_replace_all(body_update[[i]],'((Exit|Exeunt|Enter|Re-enter)([[:graph:]
+%[:blank:]])*)|(\\[([[:graph:][:blank:]])+\\])','')
+
+%#find the sentences that begin with a speaker's name plus [.]
+%  speaker_locate[[i]]=grep('^[[:blank:]]{0,4}[[:upper:]]+[[:lower:]]*([[:blank:]]*[[:upper:]]+
+%[[:lower:]]*)*[.][[:blank:]]*[[:upper:]][[:blank:]]*[[:punct:]]*([[:blank:]][[:upper:]])?[[:blank:]]*
+%[[:punct:]]?[[:lower:]]',body_update[[i]])
+%  speaker_first_content[[i]]=body_update[[i]][speaker_locate[[i]]]
+
+%#group each speaker's names in to list of name.and delete trashy blanks
+%  name[[i]]=unique(str_replace_all(str_extract(speaker_first_content[[i]],"^[[:blank:]]{0,4}
+%[[:upper:]]+[[:lower:]]*([[:blank:]]*[[:upper:]]*[[:lower:]]*){0,2}"),"^[[:blank:]]*",''))
+
+%#I suppose that  play's names are either all upper cases or all lower cases except the first one. 
+%#So find plays whose names are all upper cases and delete confused 'names' that contains lower cases. 
+%  if((length(grep('[[:lower:]]+',name[[i]]))/length(name[[i]]))<0.3&&(length(grep('[[:lower:]]+',
+%name[[i]]))/length(name[[i]]))>0)             name[[i]]=name[[i]][-grep('[[:lower:]]+',name[[i]])]
+
+%#calculate the number of unique speakers required in Q(d)
+%  speaker_number[i]=length(name[[i]])
+%}
+%%end.rcode
+Store all information of chunks in a list called chunk\_name\_play. chunk\_name\_play{[[i]]} contains all all chunks of each speaker in play\_i, and chunk\_name\_play{[[i]][[j]]} contains all chunks of speaker\_j in play\_i. 
+%%begin.rcode r-chunk8,eval=FALSE
+%chunk_name_play=list();
+%for(r in 1:36){
+%  chunk=list();for(k in 1:length(name[[r]])){
+%     # in play_r,get the location of speakers_k'names,store them in vector l
+%     l=c()
+%     l=grep(paste('^[[:blank:]]*',name[[r]][k],sep=''),body_update[[r]])
+%     rownumber=c();
+%     # use for loop to decide the length of each chunk
+%     for(i in 1:length(l)){
+%         j=0;rownumber[i]=1;
+%         # if the line does not begin with a name and it is not a empty line, then I 
+%         #suppose it is the content of chunk.
+%          while((length(grep('^[[:blank:]]{0,4}[[:upper:]]+[[:lower:]]*([[:blank:]]*
+%[[:upper:]]+[[:lower:]]*)*[.]',body_update[[r]][(l[i]+j+1)]))==0)&&
+%(length(grep("[[:lower:]]",body_update[[r]][(l[i]+j+1)]))==1)){
+%             j=j+1
+%            rownumber[i]=rownumber[i]+1
+%          }
+%      }
+%      # namei contains the chunks of speaker_k in play_r
+%     namei=list()
+%      for(i in 1:length(l)){ 
+%         namei[[i]]=body_update[[r]][l[i]:(l[i]+rownumber[i]-1)]
+%         namei[[i]]=str_replace(namei[[i]],name[[r]][k],'')
+%         namei[[i]]=str_replace(namei[[i]],'[[:blank:]]{2,}','')
+%         namei[[i]]=str_replace(namei[[i]],'\\. ','')
+%      }
+%      # list of chunk store the information of play_r
+%      chunk[[k]]=namei
+%  }
+%  # all information is stored in chunk_name_play
+%  chunk_name_play[[r]]=chunk
+%}
+%%end.rcode
+
+\subsection{(d)}
+
+Create vector that store the targeted result
+%%begin.rcode r-chunk9,eval=FALSE
+%chunk_number=c(rep(0,36))
+%sentences_number=c(rep(0,36))
+%words_number=c(rep(0,36))
+%unique_words=c()
+%%end.rcode
+
+Suppose that words are made up with alpha plus \'; And sentences are splited by{[,!]}; 
+%%begin.rcode r-chunk10,eval=FALSE
+%word_extract=list()
+%sentences_extract=list()
+%for(i in 1:36){
+%  unique_words[i]=length(unique(unlist(str_extract_all(chunk_name_play[[i]],"[[:alpha:]]+
+%[']?[[:alpha:]]*"))))-1
+%  word_extract=str_extract_all(chunk_name_play[[i]],'[[:graph:]]+')
+%  sentences_extract=str_extract_all(chunk_name_play[[i]],'[.!]')
+%  for (j in 1:speaker_number[i]){
+%    chunk_number[i]=chunk_number[i]+length(chunk_name_play[[i]][[j]])
+%    sentences_number[i]=sentences_number[i]+length(sentences_extract[[j]])
+%    words_number[i]=words_number[i]+length(word_extract[[j]])
+%  }
+%}
+%%end.rcode
+Store result in a matrix called data\_final.
+%%begin.rcode r-chunk11,eval=FALSE
+%words_perchunk=words_number/chunk_number
+%data_final=cbind(act_number,scene_number,speaker_number,chunk_number,sentences_number,words_perchunk,unique_words)
+%%end.rcode
+
+\subsection{(e)}
+First show the original data we get from the above question.
+%%begin.rcode r-chunk12
+%data_final
+%%end.rcode
+We need to analyse the data by year, so I sort the year and mean the data in the same year
+%%begin.rcode r-chunk13,eval=FALSE
+%for(i in 1:7) data_final[,i]=as.numeric(data_final[,i])
+%year_sort=sort(unique(year_play))
+%n=length(year_sort)
+%data_sort_byyear=c()
+%for(i in 1:n){
+%  temp=data_final[which(year_play==year_sort[i]),]
+%# When the year is unique, dim equals 0, then there would be a error when use apply. 
+%# so we need to deal with data in two ways.
+%  if(length(dim(temp))>0){
+%  year_mean=apply(temp,2,mean)
+%  data_sort_byyear=rbind(data_sort_byyear,year_mean)
+%  }
+%  else
+%  data_sort_byyear=rbind(data_sort_byyear,temp)
+%  rownames(data_sort_byyear)[i]=i
+%}
+%data_sort_byyear=cbind(as.numeric(year_sort),data_sort_byyear)
+%colnames(data_sort_byyear)[1]='year'
+%data_sort_byyear=round(data_sort_byyear,2)
+%%end.rcode
+
+First see the result of scatter plot of each element in term of function of time. As all plays have five acts, I do not plot it.
+%%begin.rcode r-chunk14
+%par(mfrow=c(2,3))
+%for(i in 3:8) plot(data_sort_byyear[,c(1,i)])
+%%end.rcode
+
+According to the plot, I guess that number of unique words might be increasing by year in term of statistics. Other elements seems not change with year.
+So I use ggplot2 get a clearer view in the sixth plot.
+
+%%begin.rcode r-chunk15
+%qplot(data_sort_byyear[,1],data_sort_byyear[,8],geom=c('point','smooth'),method='lm',xlab 
+%= 'year',ylab = 'number of unique words')
+%%end.rcode
+
+In addition, I find the p-value is about 0.1 by using lm. So I think unique words increased by year in Shakepeare's play, but the trend is not obvious.
+
+\section{Question 3}
+
+Fields:\\
+\quad year='numeric'\qquad year published of the play\\
+\quad title='character'\qquad title of the play\\
+\quad text='character'\qquad original content of the play\\
+\quad body='character' \qquad body of the play\\
+\quad chunk='character' \qquad all spoken chunks in the play\\
+\quad acts\_number='numeric' \qquad number of acts\\
+\quad scenes\_number='numeric' \qquad number of scenes\\
+\quad speakers\_number='numeric'\qquad number of unique speakers\\
+\quad chunks\_number='numeric' \qquad number of chunks\\
+\quad sentences\_number='numeric' \qquad number of sentences\\
+\quad words\_number='numeric' \qquad number of total words\\
+\quad unique\_words='numeric' \qquad number of unique words\\
+\quad words\_perchunk='numeric' \qquad number of words per chunk\\
+we can also use prototype to set default of fields except text\\
+
+
+Methods:\\
+in the following methods, input mean the content of methods really need. For example, in method get\_basic\_information, we can input play and use play@text to get text, rather than input text directly.
+\\
+1.get\_basic\_information : input text of the play and output: year,title,body,acts\_number,scenes\_number \\  
+2.get\_chunk : input body of the play and output chunk \\
+3.get\_chunk\_information : input chunk and output: speakers\_number,chunks\_number,sentences\_number,words\_number,\\unique\_words,words\_perchunk
+  
+
+\end{document}
