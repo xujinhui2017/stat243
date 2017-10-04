@@ -1,0 +1,34 @@
+\documentclass{article}
+\usepackage{natbib}
+\usepackage[unicode=true]{hyperref}
+\usepackage{geometry}
+\geometry{tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+%% begin.rcode setup, include=FALSE
+
+% require(ggplot2)
+% library(knitr) 
+% opts_chunk$set(fig.width = 5, fig.height = 5)
+%% end.rcode
+
+
+\begin{document} 
+\title{STAT243-PS4}
+\author{Jinhui Xu}
+\date{September 2017}
+
+\maketitle
+
+\section{Other students}
+I discuss some problems with Xin Shi.  
+
+\section{Question 1}
+
+
+
+\section{Question 2}
+ 
+
+
+
+
+\end{document}
