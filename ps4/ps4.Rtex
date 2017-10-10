@@ -23,12 +23,214 @@ I discuss some problems with Xin Shi.
 
 \section{Question 1}
 
+\subsection{(a)}
+There is only one copy. Because we can see that data and input share same address.
+%%begin.rcode rcode-chunk1
+x <- 1:10
+f <- function(input){
+  print(.Internal(inspect(input)))       #check the address of input
+  data <- input
+  print(.Internal(inspect(data)))        #check the address of data
+	g <- function(param) return(param * data) 
+	return(g)
+}
+data<-100
+myFun <- f(x)
+%%end.rcode
+
+\subsection{(b)}
+The size of the serialized object is doubled. The reason is that R store both input and data even though they have same address.
+%%begin.rcode rcode-chunk2
+x <- rnorm(1e5)
+f <- function(input){
+  data <- input
+	g <- function(param) return(param * data) 
+	return(g)
+}
+myFun <- f(x)
+object.size(x)
+length(serialize(myFun,NULL))
+%%end.rcode
+
+
+\subsection{(c)}
+When the function contains the command: data=input. myFun can get the value of data even x is removed.
+However, when we delete that command, myFun need the value of input of f which means that myFun needs the value of x. So if we rm x, there would be an error.
+%%begin.rcode rcode-chunk3
+x <- 1:10
+f <- function(data){
+  g <- function(param) return(param * data) 
+  return(g)
+}
+myFun <- f(x) 
+rm(x)
+data <- 100 
+myFun(3)
+ls(envir=environment(myFun))
+%%end.rcode
+
+\subsection{(d)}
+We can use force to force the value of data.
+%%begin.rcode rcode-chunk4
+x <- 1:10
+f <- function(data){
+  force(data)
+  g <- function(param) return(param * data) 
+  return(g)
+}
+myFun <- f(x) 
+rm(x)
+data <- 100 
+myFun(3)
+%%end.rcode
 
 
 \section{Question 2}
- 
+\subsection{(a)}
+When change the a vector of list, I find that the address of the relevant changes and the other one does not change. Therefore, R would create a new vector.
+%% begin.rcode r-chunk5
+  list1=list(a=rnorm(1e5),b=rnorm(1e5))
+  .Internal(inspect(list1))
+  list1[[1]][1]<-100
+  .Internal(inspect(list2))
+%% end.rcode
 
+\subsection{(b)}
+According to the adddress of two lists before any change, we know that there is no copy-on-change.When the change is made, only the address of the relevant vector changes. Therefore, only a copy of the relevant vector is made.
+%% begin.rcode r-chunk6
+  list2=list(a=rnorm(1e5),b=rnorm(1e5))
+  list2_cp=list2
+  .Internal(inspect((list2)))
+  .Internal(inspect((list2_cp)))
+  #the address of list2_cp is same with that of list2
+  list2_cp[[1]][1]<-100
+  .Internal(inspect(list2_cp))           
+  #after change, we can find only the address of relevant vector changes
+%% end.rcode
 
+\subsection{(c)}
+Notice the change of address after adding a vector into the second list. The address of two lists becomes different, but two original vectors still have original addresses. So the only change is that the second list creates a new vector while other vectors still share original addresses.
+%% begin.rcode r-chunk7  
+  list3=list(a=list(rnorm(1e5)),b=list(rnorm(1e5)))
+  list3_cp=list3
+  .Internal(inspect(list3))
+  .Internal(inspect(list3_cp))
+  list3_cp$b[[2]]<-rnorm(1e5)
+  .Internal(inspect(list3_cp))
+%% end.rcode
 
+\subsection{(d)}
+Object.size is twice large as the result of gc. I guess that it is because two elements of list is stored in the same address, but object.size estimates the size of list equels to sum of size of each element.
+%% begin.rcode r-chunk8
+gc()
+tmp <- list()
+x <- rnorm(1e7)
+tmp[[1]] <- x
+tmp[[2]] <- x 
+.Internal(inspect(tmp))
+object.size(tmp)
+gc()
+%% end.rcode
+
+\section{Question 3}
+Notice that in the original code,firstly, the if else is not necessary at all. So I directly calculate q without if else. Secondly I replace three nested for loops with simple computation of vector
+%% begin.rcode r-chunk9
+ll <- function(Theta, A) {
+  sum.ind <- which(A==1, arr.ind=T)
+  logLik <- sum(log(Theta[sum.ind])) - sum(Theta)
+  return(logLik)
+}
+#######################################
+##original code########################
+oneUpdate <- function(A, n, K, theta.old, thresh = 0.1) { 
+  theta.old1 <- theta.old
+  Theta.old <- theta.old %*% t(theta.old)
+  L.old <- ll(Theta.old, A)
+  q <- array(0, dim = c(n, n, K))
+##############the following part would be revised
+  for (i in 1:n) { 
+    for (j in 1:n) {
+      for (z in 1:K) {
+        if (theta.old[i, z]*theta.old[j, z] == 0){
+        q[i, j, z] <- 0 } else {
+           q[i, j, z] <- theta.old[i, z]*theta.old[j, z] /Theta.old[i, j]
+         } 
+       }
+     } 
+  }
+################
+  theta.new <- theta.old 
+  for (z in 1:K) {
+  theta.new[,z] <- rowSums(A*q[,,z])/sqrt(sum(A*q[,,z])) 
+  }
+  Theta.new <- theta.new %*% t(theta.new) 
+  L.new <- ll(Theta.new, A)
+      converge.check <- abs(L.new - L.old) < thresh 
+  theta.new <- theta.new/rowSums(theta.new) 
+  return(list(theta = theta.new, loglik = L.new,converged = converge.check))
+} 
+
+#######################################
+##revised code#########################
+oneUpdate_new <- function(A, n, K, theta.old, thresh = 0.1) { 
+  theta.old1 <- theta.old
+  Theta.old <- theta.old %*% t(theta.old)
+  L.old <- ll(Theta.old, A)
+  q <- array(0, dim = c(n, n, K))
+####################begin.revised part
+  for (z in 1:K) {
+       q[ , , z] <- theta.old[, z]%*%t(theta.old[ , z]) /Theta.old
+  }
+####################end.revised part
+  theta.new <- theta.old 
+  for (z in 1:K) {
+  theta.new[,z] <- rowSums(A*q[,,z])/sqrt(sum(A*q[,,z])) 
+  }
+  Theta.new <- theta.new %*% t(theta.new) 
+  L.new <- ll(Theta.new, A)
+      converge.check <- abs(L.new - L.old) < thresh 
+  theta.new <- theta.new/rowSums(theta.new) 
+  return(list(theta = theta.new, loglik = L.new,converged = converge.check))
+}   
+# initialize the parameters at random starting values
+temp <- matrix(runif(n*K), n, K) 
+theta.init <- temp/rowSums(temp)
+#compare the time used 
+system.time(out <- oneUpdate(A, n, K, theta.init))
+system.time(out_new <- oneUpdate_new(A, n, K, theta.init))
+all.equal(out,out_new)
+%% end.rcode
+The results are same while the time used by revised code decreases.
+
+\section{Question 4}
+Notice that in the function FYKD, the for loop is aim to generate vector x. However, the algorithm only need the first k value of vector x. So we can only calculate that part rather than entire vector.
+%%begin.rcode r-chunk10
+PIKK <- function(x, k) {
+x[sort(runif(length(x)), index.return = TRUE)$ix[1:k]]
+}
+FYKD <- function(x, k) { 
+  n <- length(x)
+#in the original code , the following code is to generate entire n values in vector x
+  for(i in 1:n) {
+     j = sample(i:n, 1)
+     tmp <- x[i]
+     x[i] <- x[j]
+     x[j] <- tmp
+  }
+return(x[1:k])  # while we only need first k values 
+}
+
+#so revised code do not calculate the latter part of the vector
+FYKD_new <- function(x, k) { 
+  n <- length(x)
+  for(i in 1:k) {
+     j = sample(i:n, 1)
+     tmp <- x[i]
+     x[i] <- x[j]
+     x[j] <- tmp
+  }
+return(x[1:k])
+}
+%%end.rcode
 
 \end{document}
