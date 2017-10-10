@@ -59,7 +59,7 @@
 \begin{document} 
 \title{STAT243-PS4}
 \author{Jinhui Xu}
-\date{September 2017}
+\date{October 2017}
 
 \maketitle
 
@@ -85,9 +85,9 @@ There is only one copy. Because we can see that data and input share same addres
 \hlstd{myFun} \hlkwb{<-} \hlkwd{f}\hlstd{(x)}
 \end{alltt}
 \begin{verbatim}
-## @11745fe10 13 INTSXP g0c4 [NAM(2)] (len=10, tl=0) 1,2,3,4,5,...
+## @117a12880 13 INTSXP g0c4 [NAM(2)] (len=10, tl=0) 1,2,3,4,5,...
 ##  [1]  1  2  3  4  5  6  7  8  9 10
-## @11745fe10 13 INTSXP g0c4 [NAM(2)] (len=10, tl=0) 1,2,3,4,5,...
+## @117a12880 13 INTSXP g0c4 [NAM(2)] (len=10, tl=0) 1,2,3,4,5,...
 ##  [1]  1  2  3  4  5  6  7  8  9 10
 \end{verbatim}
 \end{kframe}
@@ -180,28 +180,28 @@ When change the a vector of list, I find that the address of the relevant change
 \hlkwd{.Internal}\hlstd{(}\hlkwd{inspect}\hlstd{(list1))}
 \end{alltt}
 \begin{verbatim}
-## @116e802a0 19 VECSXP g0c2 [NAM(2),ATT] (len=2, tl=0)
-##   @11301d000 14 REALSXP g0c7 [] (len=100000, tl=0) 0.260864,1.72475,-1.39273,-0.308712,0.459819,...
-##   @109baf000 14 REALSXP g0c7 [] (len=100000, tl=0) 0.720782,-0.750896,-0.00154814,-0.591199,-0.465081,...
+## @12b4f14b0 19 VECSXP g0c2 [NAM(2),ATT] (len=2, tl=0)
+##   @10ec8a000 14 REALSXP g0c7 [] (len=100000, tl=0) 0.163302,1.5673,0.59027,-1.25237,-0.657689,...
+##   @112188000 14 REALSXP g0c7 [] (len=100000, tl=0) -0.316091,0.271516,1.18125,0.0445575,-1.83643,...
 ## ATTRIB:
-##   @110353bf0 02 LISTSXP g0c0 [] 
+##   @10971f640 02 LISTSXP g0c0 [] 
 ##     TAG: @103824140 01 SYMSXP g1c0 [MARK,NAM(2),LCK,gp=0x6000] "names" (has value)
-##     @116e802d8 16 STRSXP g0c2 [] (len=2, tl=0)
+##     @12b4f14e8 16 STRSXP g0c2 [] (len=2, tl=0)
 ##       @103021b98 09 CHARSXP g1c1 [MARK,gp=0x61] [ASCII] [cached] "a"
 ##       @1032eab98 09 CHARSXP g1c1 [MARK,gp=0x61] [ASCII] [cached] "b"
 \end{verbatim}
 \begin{alltt}
 \hlstd{list1[[}\hlnum{1}\hlstd{]][}\hlnum{1}\hlstd{]}\hlkwb{<-}\hlnum{100}
-\hlkwd{.Internal}\hlstd{(}\hlkwd{inspect}\hlstd{(list2))}
+\hlkwd{.Internal}\hlstd{(}\hlkwd{inspect}\hlstd{(list1))}
 \end{alltt}
 \begin{verbatim}
-## @11864b118 19 VECSXP g1c2 [MARK,NAM(2),ATT] (len=2, tl=0)
-##   @10b47e000 14 REALSXP g1c7 [MARK,NAM(2)] (len=100000, tl=0) -1.05714,0.0947067,-1.0191,1.53438,-2.26516,...
-##   @10b700000 14 REALSXP g1c7 [MARK,NAM(2)] (len=100000, tl=0) 0.19425,-0.332612,0.753014,0.510845,-0.115673,...
+## @13d5cb608 19 VECSXP g0c2 [NAM(1),ATT] (len=2, tl=0)
+##   @10b52e000 14 REALSXP g0c7 [] (len=100000, tl=0) 100,1.5673,0.59027,-1.25237,-0.657689,...
+##   @112188000 14 REALSXP g0c7 [NAM(2)] (len=100000, tl=0) -0.316091,0.271516,1.18125,0.0445575,-1.83643,...
 ## ATTRIB:
-##   @135938190 02 LISTSXP g1c0 [MARK] 
+##   @10f603b78 02 LISTSXP g0c0 [] 
 ##     TAG: @103824140 01 SYMSXP g1c0 [MARK,NAM(2),LCK,gp=0x6000] "names" (has value)
-##     @11864b188 16 STRSXP g1c2 [MARK,NAM(2)] (len=2, tl=0)
+##     @12b4f14e8 16 STRSXP g0c2 [NAM(2)] (len=2, tl=0)
 ##       @103021b98 09 CHARSXP g1c1 [MARK,gp=0x61] [ASCII] [cached] "a"
 ##       @1032eab98 09 CHARSXP g1c1 [MARK,gp=0x61] [ASCII] [cached] "b"
 \end{verbatim}
@@ -218,13 +218,13 @@ According to the adddress of two lists before any change, we know that there is 
 \hlkwd{.Internal}\hlstd{(}\hlkwd{inspect}\hlstd{((list2)))}
 \end{alltt}
 \begin{verbatim}
-## @116103c38 19 VECSXP g0c2 [NAM(2),ATT] (len=2, tl=0)
-##   @110900000 14 REALSXP g0c7 [] (len=100000, tl=0) -0.315374,1.05064,1.03944,0.722292,-0.809419,...
-##   @110d00000 14 REALSXP g0c7 [] (len=100000, tl=0) 0.0720925,0.810187,0.415644,-0.576821,3.24783,...
+## @1197c19f8 19 VECSXP g0c2 [NAM(2),ATT] (len=2, tl=0)
+##   @1114cf000 14 REALSXP g0c7 [] (len=100000, tl=0) -0.917492,1.34264,0.880094,-0.928486,1.4136,...
+##   @112000000 14 REALSXP g0c7 [] (len=100000, tl=0) -1.08646,-0.686031,1.63498,1.22225,-0.340234,...
 ## ATTRIB:
-##   @127c22808 02 LISTSXP g0c0 [] 
+##   @11841e0b0 02 LISTSXP g0c0 [] 
 ##     TAG: @103824140 01 SYMSXP g1c0 [MARK,NAM(2),LCK,gp=0x6000] "names" (has value)
-##     @116103ca8 16 STRSXP g0c2 [] (len=2, tl=0)
+##     @1197c1a68 16 STRSXP g0c2 [] (len=2, tl=0)
 ##       @103021b98 09 CHARSXP g1c1 [MARK,gp=0x61] [ASCII] [cached] "a"
 ##       @1032eab98 09 CHARSXP g1c1 [MARK,gp=0x61] [ASCII] [cached] "b"
 \end{verbatim}
@@ -232,13 +232,13 @@ According to the adddress of two lists before any change, we know that there is 
 \hlkwd{.Internal}\hlstd{(}\hlkwd{inspect}\hlstd{((list2_cp)))}
 \end{alltt}
 \begin{verbatim}
-## @116103c38 19 VECSXP g0c2 [NAM(2),ATT] (len=2, tl=0)
-##   @110900000 14 REALSXP g0c7 [] (len=100000, tl=0) -0.315374,1.05064,1.03944,0.722292,-0.809419,...
-##   @110d00000 14 REALSXP g0c7 [] (len=100000, tl=0) 0.0720925,0.810187,0.415644,-0.576821,3.24783,...
+## @1197c19f8 19 VECSXP g0c2 [NAM(2),ATT] (len=2, tl=0)
+##   @1114cf000 14 REALSXP g0c7 [] (len=100000, tl=0) -0.917492,1.34264,0.880094,-0.928486,1.4136,...
+##   @112000000 14 REALSXP g0c7 [] (len=100000, tl=0) -1.08646,-0.686031,1.63498,1.22225,-0.340234,...
 ## ATTRIB:
-##   @127c22808 02 LISTSXP g0c0 [] 
+##   @11841e0b0 02 LISTSXP g0c0 [] 
 ##     TAG: @103824140 01 SYMSXP g1c0 [MARK,NAM(2),LCK,gp=0x6000] "names" (has value)
-##     @116103ca8 16 STRSXP g0c2 [] (len=2, tl=0)
+##     @1197c1a68 16 STRSXP g0c2 [] (len=2, tl=0)
 ##       @103021b98 09 CHARSXP g1c1 [MARK,gp=0x61] [ASCII] [cached] "a"
 ##       @1032eab98 09 CHARSXP g1c1 [MARK,gp=0x61] [ASCII] [cached] "b"
 \end{verbatim}
@@ -248,13 +248,13 @@ According to the adddress of two lists before any change, we know that there is 
 \hlkwd{.Internal}\hlstd{(}\hlkwd{inspect}\hlstd{(list2_cp))}
 \end{alltt}
 \begin{verbatim}
-## @1163d1460 19 VECSXP g0c2 [NAM(1),ATT] (len=2, tl=0)
-##   @110dc4000 14 REALSXP g0c7 [] (len=100000, tl=0) 100,1.05064,1.03944,0.722292,-0.809419,...
-##   @110d00000 14 REALSXP g0c7 [NAM(2)] (len=100000, tl=0) 0.0720925,0.810187,0.415644,-0.576821,3.24783,...
+## @12b2d0a78 19 VECSXP g0c2 [NAM(1),ATT] (len=2, tl=0)
+##   @11140b000 14 REALSXP g0c7 [] (len=100000, tl=0) 100,1.34264,0.880094,-0.928486,1.4136,...
+##   @112000000 14 REALSXP g0c7 [NAM(2)] (len=100000, tl=0) -1.08646,-0.686031,1.63498,1.22225,-0.340234,...
 ## ATTRIB:
-##   @119702d58 02 LISTSXP g0c0 [] 
+##   @14cf41e00 02 LISTSXP g0c0 [] 
 ##     TAG: @103824140 01 SYMSXP g1c0 [MARK,NAM(2),LCK,gp=0x6000] "names" (has value)
-##     @116103ca8 16 STRSXP g0c2 [NAM(2)] (len=2, tl=0)
+##     @1197c1a68 16 STRSXP g0c2 [NAM(2)] (len=2, tl=0)
 ##       @103021b98 09 CHARSXP g1c1 [MARK,gp=0x61] [ASCII] [cached] "a"
 ##       @1032eab98 09 CHARSXP g1c1 [MARK,gp=0x61] [ASCII] [cached] "b"
 \end{verbatim}
@@ -274,15 +274,15 @@ Notice the change of address after adding a vector into the second list. The add
 \hlkwd{.Internal}\hlstd{(}\hlkwd{inspect}\hlstd{(list3))}
 \end{alltt}
 \begin{verbatim}
-## @1336c3940 19 VECSXP g0c2 [NAM(2),ATT] (len=2, tl=0)
-##   @127ff1af8 19 VECSXP g0c1 [] (len=1, tl=0)
-##     @109900000 14 REALSXP g0c7 [] (len=100000, tl=0) -0.902474,0.657533,-1.1857,-0.844848,0.079948,...
-##   @127ff1b28 19 VECSXP g0c1 [] (len=1, tl=0)
-##     @11301d000 14 REALSXP g0c7 [] (len=100000, tl=0) -0.789741,0.481347,-0.815168,-0.121418,1.07905,...
+## @11a704b88 19 VECSXP g0c2 [NAM(2),ATT] (len=2, tl=0)
+##   @103dd0d28 19 VECSXP g0c1 [] (len=1, tl=0)
+##     @110d00000 14 REALSXP g0c7 [] (len=100000, tl=0) -0.304923,0.11101,0.137074,-0.389024,-0.476274,...
+##   @103dd0de8 19 VECSXP g0c1 [] (len=1, tl=0)
+##     @11224c000 14 REALSXP g0c7 [] (len=100000, tl=0) 0.380603,-0.357204,-0.230827,0.886193,-0.540597,...
 ## ATTRIB:
-##   @133723230 02 LISTSXP g0c0 [] 
+##   @111b98758 02 LISTSXP g0c0 [] 
 ##     TAG: @103824140 01 SYMSXP g1c0 [MARK,NAM(2),LCK,gp=0x6000] "names" (has value)
-##     @1336c2a40 16 STRSXP g0c2 [] (len=2, tl=0)
+##     @11a704c68 16 STRSXP g0c2 [] (len=2, tl=0)
 ##       @103021b98 09 CHARSXP g1c1 [MARK,gp=0x61] [ASCII] [cached] "a"
 ##       @1032eab98 09 CHARSXP g1c1 [MARK,gp=0x61] [ASCII] [cached] "b"
 \end{verbatim}
@@ -290,15 +290,15 @@ Notice the change of address after adding a vector into the second list. The add
 \hlkwd{.Internal}\hlstd{(}\hlkwd{inspect}\hlstd{(list3_cp))}
 \end{alltt}
 \begin{verbatim}
-## @1336c3940 19 VECSXP g0c2 [NAM(2),ATT] (len=2, tl=0)
-##   @127ff1af8 19 VECSXP g0c1 [] (len=1, tl=0)
-##     @109900000 14 REALSXP g0c7 [] (len=100000, tl=0) -0.902474,0.657533,-1.1857,-0.844848,0.079948,...
-##   @127ff1b28 19 VECSXP g0c1 [] (len=1, tl=0)
-##     @11301d000 14 REALSXP g0c7 [] (len=100000, tl=0) -0.789741,0.481347,-0.815168,-0.121418,1.07905,...
+## @11a704b88 19 VECSXP g0c2 [NAM(2),ATT] (len=2, tl=0)
+##   @103dd0d28 19 VECSXP g0c1 [] (len=1, tl=0)
+##     @110d00000 14 REALSXP g0c7 [] (len=100000, tl=0) -0.304923,0.11101,0.137074,-0.389024,-0.476274,...
+##   @103dd0de8 19 VECSXP g0c1 [] (len=1, tl=0)
+##     @11224c000 14 REALSXP g0c7 [] (len=100000, tl=0) 0.380603,-0.357204,-0.230827,0.886193,-0.540597,...
 ## ATTRIB:
-##   @133723230 02 LISTSXP g0c0 [] 
+##   @111b98758 02 LISTSXP g0c0 [] 
 ##     TAG: @103824140 01 SYMSXP g1c0 [MARK,NAM(2),LCK,gp=0x6000] "names" (has value)
-##     @1336c2a40 16 STRSXP g0c2 [] (len=2, tl=0)
+##     @11a704c68 16 STRSXP g0c2 [] (len=2, tl=0)
 ##       @103021b98 09 CHARSXP g1c1 [MARK,gp=0x61] [ASCII] [cached] "a"
 ##       @1032eab98 09 CHARSXP g1c1 [MARK,gp=0x61] [ASCII] [cached] "b"
 \end{verbatim}
@@ -307,16 +307,16 @@ Notice the change of address after adding a vector into the second list. The add
 \hlkwd{.Internal}\hlstd{(}\hlkwd{inspect}\hlstd{(list3_cp))}
 \end{alltt}
 \begin{verbatim}
-## @1336bdb58 19 VECSXP g0c2 [NAM(1),ATT] (len=2, tl=0)
-##   @127ff1af8 19 VECSXP g0c1 [NAM(2)] (len=1, tl=0)
-##     @109900000 14 REALSXP g0c7 [] (len=100000, tl=0) -0.902474,0.657533,-1.1857,-0.844848,0.079948,...
-##   @1336bdb90 19 VECSXP g0c2 [] (len=2, tl=0)
-##     @11301d000 14 REALSXP g0c7 [NAM(2)] (len=100000, tl=0) -0.789741,0.481347,-0.815168,-0.121418,1.07905,...
-##     @110e88000 14 REALSXP g0c7 [NAM(2)] (len=100000, tl=0) -0.311266,0.221599,0.132626,-0.370482,0.297938,...
+## @11a667588 19 VECSXP g0c2 [NAM(1),ATT] (len=2, tl=0)
+##   @103dd0d28 19 VECSXP g0c1 [NAM(2)] (len=1, tl=0)
+##     @110d00000 14 REALSXP g0c7 [] (len=100000, tl=0) -0.304923,0.11101,0.137074,-0.389024,-0.476274,...
+##   @11a6675c0 19 VECSXP g0c2 [] (len=2, tl=0)
+##     @11224c000 14 REALSXP g0c7 [NAM(2)] (len=100000, tl=0) 0.380603,-0.357204,-0.230827,0.886193,-0.540597,...
+##     @112310000 14 REALSXP g0c7 [NAM(2)] (len=100000, tl=0) 1.05821,0.760135,0.484417,-1.22833,0.813204,...
 ## ATTRIB:
-##   @1335a5440 02 LISTSXP g0c0 [] 
+##   @111cdde98 02 LISTSXP g0c0 [] 
 ##     TAG: @103824140 01 SYMSXP g1c0 [MARK,NAM(2),LCK,gp=0x6000] "names" (has value)
-##     @1336c2a40 16 STRSXP g0c2 [NAM(2)] (len=2, tl=0)
+##     @11a704c68 16 STRSXP g0c2 [NAM(2)] (len=2, tl=0)
 ##       @103021b98 09 CHARSXP g1c1 [MARK,gp=0x61] [ASCII] [cached] "a"
 ##       @1032eab98 09 CHARSXP g1c1 [MARK,gp=0x61] [ASCII] [cached] "b"
 \end{verbatim}
@@ -332,8 +332,8 @@ Object.size is twice large as the result of gc. I guess that it is because two e
 \end{alltt}
 \begin{verbatim}
 ##            used  (Mb) gc trigger  (Mb)  max used  (Mb)
-## Ncells  1650699  88.2    2637877 140.9   2637877 140.9
-## Vcells 30261474 230.9   97834876 746.5 109412705 834.8
+## Ncells  1968924 105.2    3886542 207.6   3886542 207.6
+## Vcells 30853507 235.4   97834876 746.5 109412705 834.8
 \end{verbatim}
 \begin{alltt}
 \hlstd{tmp} \hlkwb{<-} \hlkwd{list}\hlstd{()}
@@ -343,9 +343,9 @@ Object.size is twice large as the result of gc. I guess that it is because two e
 \hlkwd{.Internal}\hlstd{(}\hlkwd{inspect}\hlstd{(tmp))}
 \end{alltt}
 \begin{verbatim}
-## @119390740 19 VECSXP g0c2 [NAM(1)] (len=2, tl=0)
-##   @143800000 14 REALSXP g0c7 [NAM(2)] (len=10000000, tl=0) -0.0151081,-0.752749,-0.294608,2.24558,0.947043,...
-##   @143800000 14 REALSXP g0c7 [NAM(2)] (len=10000000, tl=0) -0.0151081,-0.752749,-0.294608,2.24558,0.947043,...
+## @117682c40 19 VECSXP g0c2 [NAM(1)] (len=2, tl=0)
+##   @146800000 14 REALSXP g0c7 [NAM(2)] (len=10000000, tl=0) -0.135277,1.27501,-0.777146,0.638026,-1.77064,...
+##   @146800000 14 REALSXP g0c7 [NAM(2)] (len=10000000, tl=0) -0.135277,1.27501,-0.777146,0.638026,-1.77064,...
 \end{verbatim}
 \begin{alltt}
 \hlkwd{object.size}\hlstd{(tmp)}
@@ -358,8 +358,8 @@ Object.size is twice large as the result of gc. I guess that it is because two e
 \end{alltt}
 \begin{verbatim}
 ##            used  (Mb) gc trigger  (Mb)  max used  (Mb)
-## Ncells  1650748  88.2    2637877 140.9   2637877 140.9
-## Vcells 30261575 230.9   97834876 746.5 109412705 834.8
+## Ncells  1968862 105.2    3886542 207.6   3886542 207.6
+## Vcells 30853415 235.4   97834876 746.5 109412705 834.8
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -431,24 +431,9 @@ Notice that in the original code,firstly, the if else is not necessary at all. S
 \hlstd{theta.init} \hlkwb{<-} \hlstd{temp}\hlopt{/}\hlkwd{rowSums}\hlstd{(temp)}
 \hlcom{#compare the time used }
 \hlkwd{system.time}\hlstd{(out} \hlkwb{<-} \hlkwd{oneUpdate}\hlstd{(A, n, K, theta.init))}
-\end{alltt}
-\begin{verbatim}
-##    user  system elapsed 
-##   5.458   0.227   5.759
-\end{verbatim}
-\begin{alltt}
 \hlkwd{system.time}\hlstd{(out_new} \hlkwb{<-} \hlkwd{oneUpdate_new}\hlstd{(A, n, K, theta.init))}
-\end{alltt}
-\begin{verbatim}
-##    user  system elapsed 
-##   0.736   0.335   1.075
-\end{verbatim}
-\begin{alltt}
 \hlkwd{all.equal}\hlstd{(out,out_new)}
 \end{alltt}
-\begin{verbatim}
-## [1] TRUE
-\end{verbatim}
 \end{kframe}
 \end{knitrout}
 The results are same while the time used by revised code decreases.
@@ -488,4 +473,70 @@ Notice that in the function FYKD, the for loop is aim to generate vector x. Howe
 \end{kframe}
 \end{knitrout}
 
+Then compare the revised code and original code in term of time needed to calculate the result.
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{####calculate time from different value of n,k. Find that microbenchmark does 100 simulations.}
+\hlstd{x}\hlkwb{=}\hlkwd{rnorm}\hlstd{(}\hlnum{10000}\hlstd{)}
+\hlstd{FYKD_newtime_10000_500}\hlkwb{<-}\hlkwd{microbenchmark}\hlstd{(}\hlkwd{FYKD_new}\hlstd{(x,}\hlnum{500}\hlstd{))}\hlopt{$}\hlstd{time}
+\hlstd{FYKD_time_10000_500}\hlkwb{<-}\hlkwd{microbenchmark}\hlstd{(}\hlkwd{FYKD}\hlstd{(x,}\hlnum{500}\hlstd{))}\hlopt{$}\hlstd{time}
+\hlstd{FYKD_newtime_10000_100}\hlkwb{<-}\hlkwd{microbenchmark}\hlstd{(}\hlkwd{FYKD_new}\hlstd{(x,}\hlnum{100}\hlstd{))}\hlopt{$}\hlstd{time}
+\hlstd{FYKD_time_10000_100}\hlkwb{<-}\hlkwd{microbenchmark}\hlstd{(}\hlkwd{FYKD}\hlstd{(x,}\hlnum{100}\hlstd{))}\hlopt{$}\hlstd{time}
+\hlstd{x}\hlkwb{=}\hlkwd{rnorm}\hlstd{(}\hlnum{20000}\hlstd{)}
+\hlstd{FYKD_newtime_20000_500}\hlkwb{<-}\hlkwd{microbenchmark}\hlstd{(}\hlkwd{FYKD_new}\hlstd{(x,}\hlnum{500}\hlstd{))}\hlopt{$}\hlstd{time}
+\hlstd{FYKD_time_20000_500}\hlkwb{<-}\hlkwd{microbenchmark}\hlstd{(}\hlkwd{FYKD}\hlstd{(x,}\hlnum{500}\hlstd{))}\hlopt{$}\hlstd{time}
+\hlstd{FYKD_newtime_20000_1000}\hlkwb{<-}\hlkwd{microbenchmark}\hlstd{(}\hlkwd{FYKD_new}\hlstd{(x,}\hlnum{1000}\hlstd{))}\hlopt{$}\hlstd{time}
+\hlstd{FYKD_time_20000_1000}\hlkwb{<-}\hlkwd{microbenchmark}\hlstd{(}\hlkwd{FYKD}\hlstd{(x,}\hlnum{1000}\hlstd{))}\hlopt{$}\hlstd{time}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#####create dataframe needed to do a boxplot }
+\hlstd{data1}\hlkwb{=}\hlkwd{cbind}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlstr{'n10000_k500'}\hlstd{,}\hlnum{100}\hlstd{),}\hlkwd{rep}\hlstd{(}\hlstr{'FYKD_new'}\hlstd{,}\hlnum{100}\hlstd{),FYKD_newtime_10000_500)}
+\hlstd{data2}\hlkwb{=}\hlkwd{cbind}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlstr{'n10000_k500'}\hlstd{,}\hlnum{100}\hlstd{),}\hlkwd{rep}\hlstd{(}\hlstr{'FYKD'}\hlstd{,}\hlnum{100}\hlstd{),FYKD_time_10000_500)}
+\hlstd{data3}\hlkwb{=}\hlkwd{cbind}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlstr{'n10000_k100'}\hlstd{,}\hlnum{100}\hlstd{),}\hlkwd{rep}\hlstd{(}\hlstr{'FYKD_new'}\hlstd{,}\hlnum{100}\hlstd{),FYKD_newtime_10000_100)}
+\hlstd{data4}\hlkwb{=}\hlkwd{cbind}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlstr{'n10000_k100'}\hlstd{,}\hlnum{100}\hlstd{),}\hlkwd{rep}\hlstd{(}\hlstr{'FYKD'}\hlstd{,}\hlnum{100}\hlstd{),FYKD_time_10000_100)}
+\hlstd{data5}\hlkwb{=}\hlkwd{cbind}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlstr{'n20000_k500'}\hlstd{,}\hlnum{100}\hlstd{),}\hlkwd{rep}\hlstd{(}\hlstr{'FYKD_new'}\hlstd{,}\hlnum{100}\hlstd{),FYKD_newtime_20000_500)}
+\hlstd{data6}\hlkwb{=}\hlkwd{cbind}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlstr{'n20000_k500'}\hlstd{,}\hlnum{100}\hlstd{),}\hlkwd{rep}\hlstd{(}\hlstr{'FYKD'}\hlstd{,}\hlnum{100}\hlstd{),FYKD_time_20000_500)}
+\hlstd{data7}\hlkwb{=}\hlkwd{cbind}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlstr{'n20000_k1000'}\hlstd{,}\hlnum{100}\hlstd{),}\hlkwd{rep}\hlstd{(}\hlstr{'FYKD_new'}\hlstd{,}\hlnum{100}\hlstd{),FYKD_newtime_20000_1000)}
+\hlstd{data8}\hlkwb{=}\hlkwd{cbind}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlstr{'n20000_k1000'}\hlstd{,}\hlnum{100}\hlstd{),}\hlkwd{rep}\hlstd{(}\hlstr{'FYKD'}\hlstd{,}\hlnum{100}\hlstd{),FYKD_time_20000_1000)}
+\hlstd{data}\hlkwb{=}\hlkwd{rbind}\hlstd{(data1,data2,data3,data4,data5,data6,data7,data8)}
+\hlkwd{colnames}\hlstd{(data)}\hlkwb{<-}\hlkwd{c}\hlstd{(}\hlstr{'nkvalue'}\hlstd{,}\hlstr{'algorithm'}\hlstd{,}\hlstr{'time'}\hlstd{)}
+\hlstd{data}\hlkwb{=}\hlkwd{as.data.frame}\hlstd{(data)}
+\hlstd{data[,}\hlnum{3}\hlstd{]}\hlkwb{=}\hlkwd{as.numeric}\hlstd{(}\hlkwd{as.character}\hlstd{(data[,}\hlnum{3}\hlstd{]))} \hlcom{#change factor to numeric}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{###do a boxplot}
+\hlstd{p}\hlkwb{<-}\hlkwd{ggplot}\hlstd{(}\hlkwc{data}\hlstd{=data,} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=nkvalue,}\hlkwc{y}\hlstd{=time))}\hlopt{+}\hlkwd{geom_boxplot}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{fill}\hlstd{=algorithm))}
+\hlstd{p}\hlopt{+} \hlkwd{facet_wrap}\hlstd{(}\hlopt{~} \hlstd{nkvalue,} \hlkwc{scales}\hlstd{=}\hlstr{"free"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/r-chunk13-1} 
+
+\end{knitrout}
+It is obviously that new algoritnm costs much less time. To view a clearer plot, I do a log function on data.
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{###go a log function on data[,3],and do boxplot on data_log}
+\hlstd{data_log}\hlkwb{=}\hlstd{data}
+\hlstd{data_log[,}\hlnum{3}\hlstd{]}\hlkwb{=}\hlkwd{log}\hlstd{(data[,}\hlnum{3}\hlstd{])}
+\hlstd{p}\hlkwb{<-}\hlkwd{ggplot}\hlstd{(}\hlkwc{data}\hlstd{=data_log,} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=nkvalue,}\hlkwc{y}\hlstd{=time))}\hlopt{+}\hlkwd{geom_boxplot}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{fill}\hlstd{=algorithm))}
+\hlstd{p}\hlopt{+} \hlkwd{facet_wrap}\hlstd{(}\hlopt{~} \hlstd{nkvalue,} \hlkwc{scales}\hlstd{=}\hlstr{"free"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/r-chunk14-1} 
+
+\end{knitrout}
+
+We can find that revised algorithm performs better as n increases or k decreases.
 \end{document}

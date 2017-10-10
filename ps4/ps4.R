@@ -167,3 +167,51 @@ FYKD <- function(x, k) {
   }
   return(x[1:k])
 }
+
+FYKD_new <- function(x, k) { 
+  n <- length(x)
+  for(i in 1:k) {
+    j = sample(i:n, 1)
+    tmp <- x[i]
+    x[i] <- x[j]
+    x[j] <- tmp
+  }
+  return(x[1:k])
+}
+
+#####plot######
+####calculate time from different value of n,k 
+x=rnorm(10000)
+FYKD_newtime_10000_500<-microbenchmark(FYKD_new(x,500))$time
+FYKD_time_10000_500<-microbenchmark(FYKD(x,500))$time
+FYKD_newtime_10000_100<-microbenchmark(FYKD_new(x,100))$time
+FYKD_time_10000_100<-microbenchmark(FYKD(x,100))$time
+x=rnorm(20000)
+FYKD_newtime_20000_500<-microbenchmark(FYKD_new(x,500))$time
+FYKD_time_20000_500<-microbenchmark(FYKD(x,500))$time
+FYKD_newtime_20000_1000<-microbenchmark(FYKD_new(x,1000))$time
+FYKD_time_20000_1000<-microbenchmark(FYKD(x,1000))$time
+
+#####create dataframe needed to do a boxplot 
+data1=cbind(rep('n10000_k500',100),rep('FYKD_new',100),FYKD_newtime_10000_500)
+data2=cbind(rep('n10000_k500',100),rep('FYKD',100),FYKD_time_10000_500)
+data3=cbind(rep('n10000_k100',100),rep('FYKD_new',100),FYKD_newtime_10000_100)
+data4=cbind(rep('n10000_k100',100),rep('FYKD',100),FYKD_time_10000_100)
+data5=cbind(rep('n20000_k500',100),rep('FYKD_new',100),FYKD_newtime_20000_500)
+data6=cbind(rep('n20000_k500',100),rep('FYKD',100),FYKD_time_20000_500)
+data7=cbind(rep('n20000_k1000',100),rep('FYKD_new',100),FYKD_newtime_20000_1000)
+data8=cbind(rep('n20000_k1000',100),rep('FYKD',100),FYKD_time_20000_1000)
+data=rbind(data1,data2,data3,data4,data5,data6,data7,data8)
+colnames(data)<-c('nkvalue','algorithm','time')
+data=as.data.frame(data)
+data[,3]=as.numeric(as.character(data[,3])) #change factor to numeric
+###do a boxplot
+p<-ggplot(data=data, aes(x=nkvalue,y=time))+geom_boxplot(aes(fill=algorithm))
+p+ facet_wrap(~ nkvalue, scales="free")
+
+###go a log function on data[,3],and do boxplot on data_log
+data_log=data
+data_log[,3]=log(data[,3])
+p<-ggplot(data=data_log, aes(x=nkvalue,y=time))+geom_boxplot(aes(fill=algorithm))
+p+ facet_wrap(~ nkvalue, scales="free")
+

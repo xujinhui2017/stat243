@@ -14,7 +14,7 @@
 \begin{document} 
 \title{STAT243-PS4}
 \author{Jinhui Xu}
-\date{September 2017}
+\date{October 2017}
 
 \maketitle
 
@@ -92,7 +92,7 @@ When change the a vector of list, I find that the address of the relevant change
   list1=list(a=rnorm(1e5),b=rnorm(1e5))
   .Internal(inspect(list1))
   list1[[1]][1]<-100
-  .Internal(inspect(list2))
+  .Internal(inspect(list1))
 %% end.rcode
 
 \subsection{(b)}
@@ -134,7 +134,7 @@ gc()
 
 \section{Question 3}
 Notice that in the original code,firstly, the if else is not necessary at all. So I directly calculate q without if else. Secondly I replace three nested for loops with simple computation of vector
-%% begin.rcode r-chunk9
+%% begin.rcode r-chunk9,eval=FALSE
 ll <- function(Theta, A) {
   sum.ind <- which(A==1, arr.ind=T)
   logLik <- sum(log(Theta[sum.ind])) - sum(Theta)
@@ -233,4 +233,50 @@ return(x[1:k])
 }
 %%end.rcode
 
+Then compare the revised code and original code in term of time needed to calculate the result.
+%%begin.rcode r-chunk11,eval=FALSE
+####calculate time from different value of n,k. Find that microbenchmark does 100 simulations.
+x=rnorm(10000)
+FYKD_newtime_10000_500<-microbenchmark(FYKD_new(x,500))$time
+FYKD_time_10000_500<-microbenchmark(FYKD(x,500))$time
+FYKD_newtime_10000_100<-microbenchmark(FYKD_new(x,100))$time
+FYKD_time_10000_100<-microbenchmark(FYKD(x,100))$time
+x=rnorm(20000)
+FYKD_newtime_20000_500<-microbenchmark(FYKD_new(x,500))$time
+FYKD_time_20000_500<-microbenchmark(FYKD(x,500))$time
+FYKD_newtime_20000_1000<-microbenchmark(FYKD_new(x,1000))$time
+FYKD_time_20000_1000<-microbenchmark(FYKD(x,1000))$time
+%%end.rcode
+
+%%begin.rcode r-chunk12
+#####create dataframe needed to do a boxplot 
+data1=cbind(rep('n10000_k500',100),rep('FYKD_new',100),FYKD_newtime_10000_500)
+data2=cbind(rep('n10000_k500',100),rep('FYKD',100),FYKD_time_10000_500)
+data3=cbind(rep('n10000_k100',100),rep('FYKD_new',100),FYKD_newtime_10000_100)
+data4=cbind(rep('n10000_k100',100),rep('FYKD',100),FYKD_time_10000_100)
+data5=cbind(rep('n20000_k500',100),rep('FYKD_new',100),FYKD_newtime_20000_500)
+data6=cbind(rep('n20000_k500',100),rep('FYKD',100),FYKD_time_20000_500)
+data7=cbind(rep('n20000_k1000',100),rep('FYKD_new',100),FYKD_newtime_20000_1000)
+data8=cbind(rep('n20000_k1000',100),rep('FYKD',100),FYKD_time_20000_1000)
+data=rbind(data1,data2,data3,data4,data5,data6,data7,data8)
+colnames(data)<-c('nkvalue','algorithm','time')
+data=as.data.frame(data)
+data[,3]=as.numeric(as.character(data[,3])) #change factor to numeric
+%%end.rcode
+
+%%begin.rcode r-chunk13
+###do a boxplot
+p<-ggplot(data=data, aes(x=nkvalue,y=time))+geom_boxplot(aes(fill=algorithm))
+p+ facet_wrap(~ nkvalue, scales="free")
+%%end.rcode
+It is obviously that new algoritnm costs much less time. To view a clearer plot, I do a log function on data.
+%%begin.rcode r-chunk14
+###go a log function on data[,3],and do boxplot on data_log
+data_log=data
+data_log[,3]=log(data[,3])
+p<-ggplot(data=data_log, aes(x=nkvalue,y=time))+geom_boxplot(aes(fill=algorithm))
+p+ facet_wrap(~ nkvalue, scales="free")
+%%end.rcode
+
+We can find that revised algorithm performs better as n increases or k decreases.
 \end{document}
