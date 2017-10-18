@@ -113,6 +113,8 @@ Copy two vectors and it is obviously that copying numeric vector takes more time
 \begin{alltt}
 \hlkwd{library}\hlstd{(data.table)}
 \hlkwd{library}\hlstd{(microbenchmark)}
+
+\hlcom{#the function to compare the time used to copy two item.}
 \hlstd{compare_copytime}\hlkwb{=}\hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{,}\hlkwc{y}\hlstd{)\{}
   \hlstd{timex}\hlkwb{=}\hlkwd{microbenchmark}\hlstd{(}\hlkwd{copy}\hlstd{(x))}\hlopt{$}\hlstd{time}      \hlcom{#get 100 data of time}
   \hlstd{timey}\hlkwb{=}\hlkwd{microbenchmark}\hlstd{(}\hlkwd{copy}\hlstd{(y))}\hlopt{$}\hlstd{time}
@@ -120,8 +122,13 @@ Copy two vectors and it is obviously that copying numeric vector takes more time
   \hlkwa{else} \hlkwd{print}\hlstd{(}\hlstr{'copying the second one cost more time'}\hlstd{)}
   \hlkwd{boxplot}\hlstd{(}\hlkwd{log}\hlstd{(timex),}\hlkwd{log}\hlstd{(timey))}
 \hlstd{\}}
+\hlcom{#generate the numeric vector}
 \hlstd{numvec}\hlkwb{<-}\hlkwd{rnorm}\hlstd{(}\hlnum{1e7}\hlstd{)}
+
+\hlcom{#generate the integer vector}
 \hlstd{intvec}\hlkwb{<-}\hlkwd{as.integer}\hlstd{(numvec)}
+
+\hlcom{#get the comparation and plot it}
 \hlkwd{compare_copytime}\hlstd{(intvec,numvec)}
 \end{alltt}
 \begin{verbatim}
@@ -133,10 +140,12 @@ Copy two vectors and it is obviously that copying numeric vector takes more time
 \end{knitrout}
 
 \subsection{(b)}
-I find that the time used to take a subset of these two vectors is nearly same.
+I find that the time used to take a subset of these two vectors is nearly same. I do several times comparision, the results are random.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
+\hlcom{#the function to compare the time used to take a subset of two items.}
+
 \hlstd{compare_subtime}\hlkwb{=}\hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{,}\hlkwc{y}\hlstd{)\{}
   \hlstd{timex}\hlkwb{=}\hlkwd{microbenchmark}\hlstd{(xsub}\hlkwb{<-}\hlstd{x[}\hlnum{1}\hlopt{:}\hlnum{5}\hlopt{*}\hlnum{1e6}\hlstd{])}\hlopt{$}\hlstd{time}       \hlcom{#get 100 data of time}
   \hlstd{timey}\hlkwb{=}\hlkwd{microbenchmark}\hlstd{(ysub}\hlkwb{<-}\hlstd{y[}\hlnum{1}\hlopt{:}\hlnum{5}\hlopt{*}\hlnum{1e6}\hlstd{])}\hlopt{$}\hlstd{time}
@@ -144,10 +153,13 @@ I find that the time used to take a subset of these two vectors is nearly same.
   \hlkwa{else} \hlkwd{print}\hlstd{(}\hlstr{'taking a subset of the second one cost more time'}\hlstd{)}
   \hlkwd{boxplot}\hlstd{(}\hlkwd{log}\hlstd{(timex),}\hlkwd{log}\hlstd{(timey))}
 \hlstd{\}}
+
+
+\hlcom{#get the comparation and plot it}
 \hlkwd{compare_subtime}\hlstd{(intvec,numvec)}
 \end{alltt}
 \begin{verbatim}
-## [1] "taking a subset of the first one takes more time"
+## [1] "taking a subset of the second one cost more time"
 \end{verbatim}
 \end{kframe}
 \includegraphics[width=\maxwidth]{figure/r-chunk3-1} 
@@ -161,15 +173,19 @@ I find that the time used to take a subset of these two vectors is nearly same.
 Therefore sometimes it is better to break up Y into p blocks of m = n/p columns rather than into n individual column-wise computations
 
 \subsection{(b)}
-\quad \ \ 1. In approach one, each worker deals with a $\frac{n}{p}\times n$ matrix , plus the memory used to store matrix X, Y. Then the total memory used in a single moment is $\frac{n}{p}\times n\times p+2n^2=3n^2$ \\
+\quad \ \ 1. In approach one, each worker deals with a $\frac{n}{p}\times n$ matrix , plus the memory used to store matrix X, Y. Then the total memory used in a single moment is 
+$$\frac{n}{p}\times n\times p+2n^2=3n^2$$ \\
 
-In approach two, each worker deals with a $\frac{n}{p}\times \frac{n}{p}$ matrix , plus the memory used to store matrix X, Y. Then the total memory used in a single moment is $\frac{n}{p}\times \frac{n}{p}\times p+2n^2=2n^2+\frac{n^2}{p}$ \\
+In approach two, each worker deals with a $\frac{n}{p}\times \frac{n}{p}$ matrix , plus the memory used to store matrix X, Y. Then the total memory used in a single moment is 
+$$\frac{n}{p}\times \frac{n}{p}\times p+2n^2=2n^2+\frac{n^2}{p}$$ \\
 
 Therefore, the second approach use less memories.\\
 
-2. In approach one, each worker deals with a matrix, so the total number needed to be passed to workers is p \\
+2. In approach one, each worker takes in and out numbers only once and it takes in a $n\times \frac{n}{p}$ matrix plus a $n\times n$ matrix, and takes out a $n\times \frac{n}{p}$ matrix. so the total number of numbers needed to be passed is 
+$$(2n\times \frac{n}{p}+n\times n)\times p=2n^2+pn^2$$ \\
 
-In approach two, each worker deals with p matrix, so the total number needed to be passed to workers is $p\times p=p^2$ \\
+In approach two, each worker takes in and out numbers p times, it takes in two $\frac{n}{p}\times n$ matrixes and takes out one $\frac{n}{p}\times \frac{n}{p}$ matrix in one time. so the total number of numbers needed to be passed is 
+$$(2\times \frac{n}{p}\times n+\frac{n}{p}\times \frac{n}{p})\times p \times p=2pn^2+n^2$$ \\
 
 Therefore, the first approach is better for minimizing the communication.
 

@@ -49,6 +49,8 @@ Copy two vectors and it is obviously that copying numeric vector takes more time
 %% begin.rcode r-chunk2
 library(data.table)
 library(microbenchmark)
+
+#the function to compare the time used to copy two item.
 compare_copytime=function(x,y){
   timex=microbenchmark(copy(x))$time      #get 100 data of time
   timey=microbenchmark(copy(y))$time
@@ -56,14 +58,21 @@ compare_copytime=function(x,y){
   else print('copying the second one cost more time')
   boxplot(log(timex),log(timey))
 }
-numvec<-rnorm(1e7)
+#generate the numeric vector
+numvec<-rnorm(1e7)  
+
+#generate the integer vector
 intvec<-as.integer(numvec)
+
+#get the comparation and plot it
 compare_copytime(intvec,numvec)
 %% end.rcode
 
 \subsection{(b)}
-I find that the time used to take a subset of these two vectors is nearly same.
+I find that the time used to take a subset of these two vectors is nearly same. I do several times comparision, the results are random.
 %% begin.rcode r-chunk3
+#the function to compare the time used to take a subset of two items.
+
 compare_subtime=function(x,y){
   timex=microbenchmark(xsub<-x[1:5*1e6])$time       #get 100 data of time
   timey=microbenchmark(ysub<-y[1:5*1e6])$time
@@ -71,6 +80,9 @@ compare_subtime=function(x,y){
   else print('taking a subset of the second one cost more time')
   boxplot(log(timex),log(timey))
 }
+
+
+#get the comparation and plot it
 compare_subtime(intvec,numvec)
 %% end.rcode
 
@@ -81,15 +93,19 @@ compare_subtime(intvec,numvec)
 Therefore sometimes it is better to break up Y into p blocks of m = n/p columns rather than into n individual column-wise computations
 
 \subsection{(b)}
-\quad \ \ 1. In approach one, each worker deals with a $\frac{n}{p}\times n$ matrix , plus the memory used to store matrix X, Y. Then the total memory used in a single moment is $\frac{n}{p}\times n\times p+2n^2=3n^2$ \\
+\quad \ \ 1. In approach one, each worker deals with a $\frac{n}{p}\times n$ matrix , plus the memory used to store matrix X, Y. Then the total memory used in a single moment is 
+$$\frac{n}{p}\times n\times p+2n^2=3n^2$$ \\
 
-In approach two, each worker deals with a $\frac{n}{p}\times \frac{n}{p}$ matrix , plus the memory used to store matrix X, Y. Then the total memory used in a single moment is $\frac{n}{p}\times \frac{n}{p}\times p+2n^2=2n^2+\frac{n^2}{p}$ \\
+In approach two, each worker deals with a $\frac{n}{p}\times \frac{n}{p}$ matrix , plus the memory used to store matrix X, Y. Then the total memory used in a single moment is 
+$$\frac{n}{p}\times \frac{n}{p}\times p+2n^2=2n^2+\frac{n^2}{p}$$ \\
 
 Therefore, the second approach use less memories.\\
 
-2. In approach one, each worker deals with a matrix, so the total number needed to be passed to workers is p \\
+2. In approach one, each worker takes in and out numbers only once and it takes in a $n\times \frac{n}{p}$ matrix plus a $n\times n$ matrix, and takes out a $n\times \frac{n}{p}$ matrix. so the total number of numbers needed to be passed is 
+$$(2n\times \frac{n}{p}+n\times n)\times p=2n^2+pn^2$$ \\
 
-In approach two, each worker deals with p matrix, so the total number needed to be passed to workers is $p\times p=p^2$ \\
+In approach two, each worker takes in and out numbers p times, it takes in two $\frac{n}{p}\times n$ matrixes and takes out one $\frac{n}{p}\times \frac{n}{p}$ matrix in one time. so the total number of numbers needed to be passed is 
+$$(2\times \frac{n}{p}\times n+\frac{n}{p}\times \frac{n}{p})\times p \times p=2pn^2+n^2$$ \\
 
 Therefore, the first approach is better for minimizing the communication.
 
