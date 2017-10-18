@@ -159,7 +159,7 @@ I find that the time used to take a subset of these two vectors is nearly same. 
 \hlkwd{compare_subtime}\hlstd{(intvec,numvec)}
 \end{alltt}
 \begin{verbatim}
-## [1] "taking a subset of the second one cost more time"
+## [1] "taking a subset of the first one takes more time"
 \end{verbatim}
 \end{kframe}
 \includegraphics[width=\maxwidth]{figure/r-chunk3-1} 
@@ -173,11 +173,11 @@ I find that the time used to take a subset of these two vectors is nearly same. 
 Therefore sometimes it is better to break up Y into p blocks of m = n/p columns rather than into n individual column-wise computations
 
 \subsection{(b)}
-\quad \ \ 1. In approach one, each worker deals with a $\frac{n}{p}\times n$ matrix , plus the memory used to store matrix X, Y. Then the total memory used in a single moment is 
-$$\frac{n}{p}\times n\times p+2n^2=3n^2$$ \\
+\quad \ \ 1. In approach one, each worker deals with a $\frac{n}{p}\times n$ matrix and a $n\times n$ matrix, plus the memory used to store a $\frac{n}{p}\times n$ result matrix. Then the total memory used in a single moment is 
+$$2\times \frac{n}{p}\times n\times p+p\times n^2=(2+p)n^2$$ \\
 
-In approach two, each worker deals with a $\frac{n}{p}\times \frac{n}{p}$ matrix , plus the memory used to store matrix X, Y. Then the total memory used in a single moment is 
-$$\frac{n}{p}\times \frac{n}{p}\times p+2n^2=2n^2+\frac{n^2}{p}$$ \\
+In approach two, each worker deals with two $\frac{n}{p}\times n$ matrixes, plus the memory used to store a $\frac{n}{p}\times \frac{n}{p}$ result matrix. Then the total memory used in a single moment is 
+$$2\times \frac{n}{p}\times n\times p+\frac{n}{p}\times \frac{n}{p}\times p=2n^2+\frac{n^2}{p}$$ \\
 
 Therefore, the second approach use less memories.\\
 
