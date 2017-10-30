@@ -1,0 +1,19 @@
+Testing the number of components in a normal mixture
+
+
+Question:
+1.The goals is to determine the number of components in a mixture distribution.
+  The metrics is the observed power of likelihood ratio tests.
+
+2.Authors chose different mixing proportions, sample sizes, nominal levels and D which measures the distance between the two components.
+  According to the table1, we can find that mixing proportion did not affect the power, while other factors all affect the power.
+  In the experiment, authors used 1000 samples. Maybe we can try different numbers of samples and judge whether 1000 simulations is enough.
+
+3.Their tables are generally good. But I think it may be better if we change the place of sample size and nominal level. In this way, we can view the power varies as a =function of sample size clearer.
+
+4.The results make sense. Because we can know relationship between the power and different  factors in the data generating mechanisms.
+
+5.In general, 10 simulations is not enough. We can try the number of simulations vary from   1000 to 10000. if the result does not change a lot, 1000 simulations is enough, otherwise not.
+
+
+
