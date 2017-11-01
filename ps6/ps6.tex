@@ -71,7 +71,7 @@ I work with Xiao Li, Junyi Tang, Shan Gao, Qi Chen, Xin Shi
   The metrics are the observed power of likelihood ratio tests, p\_value and the significance level.\\
 
 2.Authors chose different mixing proportions, sample sizes, nominal levels, number of components, number of replications and D which measures the distance between the two components.
-  According to the table1, we can find that mixing proportion did not affect the power, while other factors all affect the power. And I think the key aspects are the the distance between the two components and mixing proportions
+  According to the table, we can find that mixing proportion did not affect the power, while other factors all affect the power. And I think the key aspects are the the distance between the two components and mixing proportions
   In the experiment, authors only consider the situation that all distribution has same variance, which is not true in real practice.\\
   
 3.Their tables are generally good. But I think it may be better if we change the place of sample size and nominal level. In this way, we can view the power varies as a function of sample size much clearer.\\
@@ -196,8 +196,13 @@ I analyse the data in R. First, I read the data into R, and count the number of 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
+\hlcom{###read the data}
 \hlstd{stock}\hlkwb{<-}\hlkwd{read.csv}\hlstd{(}\hlstr{'part-00000'}\hlstd{,}\hlkwc{header}\hlstd{=}\hlnum{TRUE}\hlstd{)}
+
+\hlcom{###sum the number of hits in the same day}
 \hlstd{stock_day}\hlkwb{<-}\hlkwd{aggregate}\hlstd{(stock[,}\hlnum{4}\hlstd{],}\hlkwc{by}\hlstd{=}\hlkwd{list}\hlstd{(stock[,}\hlnum{1}\hlstd{]),}\hlkwc{FUN}\hlstd{=sum)}
+
+\hlcom{###plot }
 \hlkwd{plot}\hlstd{(stock_day[,}\hlnum{2}\hlstd{],}\hlkwc{xlab}\hlstd{=}\hlstr{'date'}\hlstd{,}\hlkwc{ylab}\hlstd{=}\hlstr{'number of hits'}\hlstd{)}
 \hlkwd{lines}\hlstd{(stock_day[,}\hlnum{2}\hlstd{])}
 \hlkwd{title}\hlstd{(}\hlkwc{main}\hlstd{=}\hlstr{'stock hits from Oct. to Dec.'}\hlstd{)}
@@ -249,10 +254,9 @@ the following code is the Rscript which is run in savio.
   \hlstd{result_part}
 \hlstd{\}}
 
+\hlcom{###output the dimension of the final txt and the first 10 lines in the final result}
 \hlstd{dim}\hlkwb{<-}\hlkwd{dim}\hlstd{(result_final)}
 \hlstd{head}\hlkwb{<-}\hlkwd{head}\hlstd{(result_final,}\hlnum{10}\hlstd{)}
-
-\hlcom{###output the dimension of the final txt and the first 10 lines in the final result}
 \hlkwd{write.table}\hlstd{(result_final,}\hlkwc{file}\hlstd{=}\hlstr{'/global/home/users/jinhui_xu/result.txt'}\hlstd{)}
 \hlkwd{write.table}\hlstd{(dim,}\hlkwc{file}\hlstd{=}\hlstr{'/global/home/users/jinhui_xu/dim.txt'}\hlstd{)}
 \hlkwd{write.table}\hlstd{(head,}\hlkwc{file}\hlstd{=}\hlstr{'/global/home/users/jinhui_xu/head.txt'}\hlstd{)}
@@ -320,7 +324,6 @@ scp jinhui_xu@dtn.brc.berkeley.edu:~/ps6_q4.out ~/stat243/stat243-fall-2017/myps
 \end{knitrout}
 
 Then see the time used. It used about 23min to process one quarter of files. So if I run my code on 4 times as many cores, I need about 23min to process all files. 
-
 Therefore, I think it takes much less time to run the spark code. About 15min vs 23min.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
