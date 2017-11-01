@@ -5,7 +5,7 @@ Question:
 1.The goals is to determine the number of components in a mixture distribution.
   The metrics is the observed power of likelihood ratio tests.
 
-2.Authors chose different mixing proportions, sample sizes, nominal levels and D which measures the distance between the two components.
+2.Authors chose different mixing proportions, sample sizes, nominal levels, #components, #replications and D which measures the distance between the two components.
   According to the table1, we can find that mixing proportion did not affect the power, while other factors all affect the power.
   In the experiment, authors used 1000 samples. Maybe we can try different numbers of samples and judge whether 1000 simulations is enough.
 

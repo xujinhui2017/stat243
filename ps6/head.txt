@@ -1,0 +1,11 @@
+"X1" "X2" "X3" "X4" "X5" "X6"
+"14046" 20081129 "210000" "pt" "Barack_Obama" 86 2032215
+"68106" 20081014 "190000" "en" "Special:AllPages/I_ran_Project_Vote_voter_registration_drive_in_Illinois,_ACORN_was_smack_dab_in_the_middle_of_it,%22_said_Barack_Obama" 2 25520
+"77377" 20081108 "190000" "no" "Bilde:Barack_Obama_2004.jpg" 1 7825
+"90408" 20081128 "190001" "en" "Early_life_and_career_of_Barack_Obama" 16 760462
+"117199" 20081110 "160000" "et" "Barack_Obama" 4 55875
+"160067" 20081101 "110000" "fr" "Discuter:Barack_Obama" 1 20922
+"160311" 20081205 "230000" "en" "Image:20081102_Bruce_Springsteen_and_Barack_Obama_hug.JPG" 2 18562
+"163170" 20081114 "210000" "en" "Barack_Obama_Senior" 1 17687
+"190861" 20081107 "020000" "de.n" "Barack_Obama_will_auf_staatliche_Zusch%C3%BCsse_f%C3%BCr_seinen_Wahlkampf_verzichten" 1 8656
+"228377" 20081008 "090001" "commons.m" "Image:Barack_Obama_and_supporters_5,_February_4,_2008.jpg" 2 11675
